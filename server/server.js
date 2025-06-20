@@ -11,6 +11,7 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // add support for form data
 app.use('/uploads', express.static('uploads')); // serve images
 app.use('/api/posts', postRoutes);
 
