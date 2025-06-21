@@ -1,13 +1,24 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setShowUserMenu(false);
+    setIsMenuOpen(false);
   };
   const isActive = (path) => {
     return location.pathname === path 
@@ -38,28 +49,76 @@ const Navigation = () => {
             >
               <span className="text-xl group-hover:animate-bounce">📚</span>
               <span className="font-medium">Posts</span>
-            </Link>
-            <Link 
+            </Link>            <Link 
               to="/create" 
               className={`${isActive('/create')} group flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 hover:shadow-md transform hover:scale-105`}
             >
               <span className="text-xl group-hover:animate-bounce">✏️</span>
               <span className="font-medium">Create</span>
             </Link>
-            <Link 
-              to="/login" 
-              className={`${isActive('/login')} group flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-blue-50 hover:shadow-md transform hover:scale-105`}
-            >
-              <span className="text-xl group-hover:animate-bounce">🔐</span>
-              <span className="font-medium">Login</span>
-            </Link>
-            <Link 
-              to="/register" 
-              className={`${isActive('/register')} group flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full font-semibold transition-all duration-300 hover:from-purple-700 hover:to-blue-700 hover:shadow-lg transform hover:scale-105 hover:-translate-y-1`}
-            >
-              <span className="text-xl group-hover:animate-bounce">🚀</span>
-              <span>Get Started</span>
-            </Link>
+            
+            {isAuthenticated ? (
+              // Authenticated user menu
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="group flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 hover:shadow-md transform hover:scale-105"
+                >
+                  <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                    {user?.name?.charAt(0)?.toUpperCase() || '👤'}
+                  </div>
+                  <span className="font-medium text-gray-700">{user?.name}</span>
+                  <span className={`transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''}`}>⬇️</span>
+                </button>
+                
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white/95 backdrop-blur-sm rounded-xl shadow-xl border border-white/50 py-2 z-50">
+                    <Link
+                      to="/profile"
+                      className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 transition-all duration-200"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <span>👤</span>
+                      <span>My Profile</span>
+                    </Link>
+                    <Link
+                      to="/my-posts"
+                      className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 transition-all duration-200"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <span>📝</span>
+                      <span>My Posts</span>
+                    </Link>
+                    <hr className="my-2 border-gray-200" />
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-all duration-200"
+                    >
+                      <span>🚪</span>
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              // Non-authenticated user links
+              <>
+                <Link 
+                  to="/login" 
+                  className={`${isActive('/login')} group flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-blue-50 hover:shadow-md transform hover:scale-105`}
+                >
+                  <span className="text-xl group-hover:animate-bounce">🔐</span>
+                  <span className="font-medium">Login</span>
+                </Link>
+                <Link 
+                  to="/register" 
+                  className={`${isActive('/register')} group flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full font-semibold transition-all duration-300 hover:from-purple-700 hover:to-blue-700 hover:shadow-lg transform hover:scale-105 hover:-translate-y-1`}
+                >
+                  <span className="text-xl group-hover:animate-bounce">🚀</span>
+                  <span>Get Started</span>
+                </Link>
+              </>
+            )}
           </div>
           
           {/* Mobile menu button */}
@@ -91,8 +150,7 @@ const Navigation = () => {
             >
               <span className="text-2xl group-hover:animate-bounce">📚</span>
               <span className="font-medium text-lg">Posts</span>
-            </Link>
-            <Link 
+            </Link>            <Link 
               to="/create" 
               className={`${isActive('/create')} group flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 hover:shadow-md`} 
               onClick={() => setIsMenuOpen(false)}
@@ -100,22 +158,55 @@ const Navigation = () => {
               <span className="text-2xl group-hover:animate-bounce">✏️</span>
               <span className="font-medium text-lg">Create</span>
             </Link>
-            <Link 
-              to="/login" 
-              className={`${isActive('/login')} group flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-blue-50 hover:shadow-md`} 
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <span className="text-2xl group-hover:animate-bounce">🔐</span>
-              <span className="font-medium text-lg">Login</span>
-            </Link>
-            <Link 
-              to="/register" 
-              className={`${isActive('/register')} group flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-semibold transition-all duration-300 hover:from-purple-700 hover:to-blue-700 hover:shadow-lg transform hover:scale-105`} 
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <span className="text-2xl group-hover:animate-bounce">🚀</span>
-              <span className="text-lg">Get Started</span>
-            </Link>
+            
+            {isAuthenticated ? (
+              // Authenticated mobile menu
+              <>
+                <Link 
+                  to="/profile" 
+                  className={`${isActive('/profile')} group flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 hover:shadow-md`} 
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <span className="text-2xl group-hover:animate-bounce">👤</span>
+                  <span className="font-medium text-lg">My Profile</span>
+                </Link>
+                <Link 
+                  to="/my-posts" 
+                  className={`${isActive('/my-posts')} group flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:shadow-md`} 
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <span className="text-2xl group-hover:animate-bounce">📝</span>
+                  <span className="font-medium text-lg">My Posts</span>
+                </Link>
+                <button 
+                  onClick={handleLogout}
+                  className="group flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 hover:shadow-md w-full text-left text-red-600"
+                >
+                  <span className="text-2xl group-hover:animate-bounce">🚪</span>
+                  <span className="font-medium text-lg">Logout</span>
+                </button>
+              </>
+            ) : (
+              // Non-authenticated mobile menu
+              <>
+                <Link 
+                  to="/login" 
+                  className={`${isActive('/login')} group flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-blue-50 hover:shadow-md`} 
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <span className="text-2xl group-hover:animate-bounce">🔐</span>
+                  <span className="font-medium text-lg">Login</span>
+                </Link>
+                <Link 
+                  to="/register" 
+                  className={`${isActive('/register')} group flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-semibold transition-all duration-300 hover:from-purple-700 hover:to-blue-700 hover:shadow-lg transform hover:scale-105`} 
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <span className="text-2xl group-hover:animate-bounce">🚀</span>
+                  <span className="text-lg">Get Started</span>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

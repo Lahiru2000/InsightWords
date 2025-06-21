@@ -8,20 +8,21 @@ const {
   deletePost
 } = require('../controllers/postController');
 const upload = require('../middleware/upload');
+const { protect, optionalAuth } = require('../middleware/auth');
 
-// GET all posts
-router.get('/', getPosts);
+// GET all posts (public, but with optional auth for user-specific data)
+router.get('/', optionalAuth, getPosts);
 
-// CREATE new post (with image upload)
-router.post('/', upload.single('image'), createPost);
+// GET single post by ID (public, but with optional auth)
+router.get('/:id', optionalAuth, getPostById);
 
-// GET single post by ID
-router.get('/:id', getPostById);
+// CREATE new post (protected - requires authentication)
+router.post('/', protect, upload.single('image'), createPost);
 
-// UPDATE post (with optional new image)
-router.put('/:id', upload.single('image'), updatePost);
+// UPDATE post by ID (protected - requires authentication)
+router.put('/:id', protect, upload.single('image'), updatePost);
 
-// DELETE post
-router.delete('/:id', deletePost);
+// DELETE post by ID (protected - requires authentication)
+router.delete('/:id', protect, deletePost);
 
 module.exports = router;
