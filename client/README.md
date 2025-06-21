@@ -1,23 +1,39 @@
-# Getting Started with Create React App
+# InsightWords Frontend - Vite + React + JSX
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is the frontend for the InsightWords application, converted from Create React App to Vite for better performance and modern development experience.
 
-## Available Scripts
+## 🚀 Features
 
-In the project directory, you can run:
+- **Vite** for fast development and build
+- **React 19** with JSX
+- **Tailwind CSS** for styling
+- **React Router** for routing
+- **Axios** for API calls
+- **ESLint** for code linting
+- **Vitest** for testing
 
-### `npm start`
+## 📦 Scripts
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run test` - Run tests
+- `npm run lint` - Lint code
+- `npm run lint:fix` - Fix linting issues
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🛠️ Development
 
-### `npm test`
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. Start development server:
+   ```bash
+   npm run dev
+   ```
+
+3. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ### `npm run build`
 
